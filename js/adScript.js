@@ -58,7 +58,10 @@
         }
       }
 
-      wpAd.gpt_setup = new wpAd.GPT(googletag);
+      wpAd.gpt_config = new wpAd.GPTConfig({
+        googletag: w.googletag,
+        sra: false
+      });
 
       placeAd2 = function(where, what, del, otf){
         var pos = what,

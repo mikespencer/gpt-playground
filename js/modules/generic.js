@@ -86,22 +86,29 @@ var wpAd = (function(w, d, undefined){
    * GPT Initial setup
    * probably a better way to do this, merge/integrating with GPT_AdSlot?..
    */
-  function GPT(gpt){
-    this.gpt = gpt;
-    this.pubservice = this.gpt.pubads();
+  function GPTConfig(config){
+    this.config = config || {
+      googletag: w.googletag
+    };
+    this.googletag = this.config.googletag;
+    this.pubservice = this.googletag.pubads();
 
     this.keyvalues = wpAd.tools.keyvalueIterator(this.keyvalue_fns, this);
     this.addKeyvalue(this.keyvalues);
 
-    this.pubservice.enableAsyncRendering();
-    //this.pubservice.enableSingleRequest();
-    this.gpt.enableServices();
+    if(this.config.sra){
+      this.pubservice.enableSingleRequest();
+    } else {
+      this.pubservice.enableAsyncRendering();
+    }
+
+    this.googletag.enableServices();
   }
 
-  GPT.prototype = {
-    constructor: GPT,
+  GPTConfig.prototype = {
+    constructor: GPTConfig,
     interstitial: function(){
-      //interstitial setup
+      //interstitial setup - define out of page slot
     },
     addKeyvalue: function(){
       if(typeof arguments[0] === 'object'){
@@ -190,7 +197,7 @@ var wpAd = (function(w, d, undefined){
     init: [],
     tools: tools,
     Ad: Ad,
-    GPT: GPT,
+    GPTConfig: GPTConfig,
     template: {}
   };
 

@@ -12,7 +12,7 @@ define(['generic', 'wp_config'], function(wpAd, config){
   /**
     * Add global, site specific keyvalues here:
     */
-  wpAd.tools.extend(wpAd.GPT.prototype.keyvalue_fns, {
+  wpAd.tools.extend(wpAd.GPTConfig.prototype.keyvalue_fns, {
     WPATC: function(){
       return ['wpatc_cookie'];
     },
