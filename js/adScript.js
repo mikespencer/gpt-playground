@@ -73,17 +73,20 @@
           posOverride = posArray[1];
           pos = posArray.join('_');
         }
-        if(wpAd.config.adTypes[what]){
-          wpAd.template[what] = new wpAd.Ad({
+        if(wpAd.config.adTypes[what] && !wpAd.template[pos]){
+          wpAd.template[pos] = new wpAd.Ad({
+            where: wpAd.where,
             sz: wpAd.config.adTypes[what].sz,
             what: what,
             pos: pos,
             posOverride: posOverride
           });
-          wpAd.template[what].render();
+          wpAd.template[pos].slot.render();
+        } else{
+          wpAd.template[pos].slot.refresh();
         }
         try{
-          console.log(what, wpAd.template[what]);
+          console.log(pos, wpAd.template[what]);
         }catch(e){}
       };
 

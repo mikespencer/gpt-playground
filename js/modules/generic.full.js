@@ -1,4 +1,4 @@
-define('generic', ['generic.core'], function(wpAd){
+define(['generic.core'], function(wpAd){
 
   /**
    *  extend basic tools object with advanced functionality
@@ -98,6 +98,8 @@ define('generic', ['generic.core'], function(wpAd){
       d.cookie = name + "=" + escape(val) + (expires ? "; expires=" + expires : "") + (path ? "; path=" + path : "") + (domain ? "; domain=" + domain : "") + (secure ? "; secure" : "");
     }
   });
+
+  //out of page slot declaration needs to go in here somewhere and called on gpt initialisation
 
   return wpAd;
 

@@ -1,9 +1,9 @@
-define(['generic', 'wp_config'], function(wpAd, config){
+define('wp', ['generic', 'wp.config'], function(wpAd, config){
 
   /**
     * Add ad specific, site specific keyvalues here:
     */
-  wpAd.tools.extend(wpAd.Ad.prototype.keyvalue_fns, {
+  wpAd.tools.extend(wpAd.Ad.prototype.keyvalues_config, {
     article: function(){
       return ['wp_article'];
     }
@@ -12,7 +12,7 @@ define(['generic', 'wp_config'], function(wpAd, config){
   /**
     * Add global, site specific keyvalues here:
     */
-  wpAd.tools.extend(wpAd.GPTConfig.prototype.keyvalue_fns, {
+  wpAd.tools.extend(wpAd.GPTConfig.prototype.keyvalues_config, {
     WPATC: function(){
       return ['wpatc_cookie'];
     },
@@ -22,7 +22,7 @@ define(['generic', 'wp_config'], function(wpAd, config){
   });
 
   //commercialNode base:
-  wpAd.cNodeBase = '/701/wpni.';
+  wpAd.where = '/701/wpni.' + commercialNode;
 
   //pass in config:
   wpAd.config = config;

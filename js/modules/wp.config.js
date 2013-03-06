@@ -1,7 +1,7 @@
 define(function(){
   return {
     flights: {
-      defaults: ['leaderboard', 'bigbox', 'flex']
+      defaults: ['leaderboard', 'bigbox', 'flex', 'bigbox_2']
     },
     adTypes: {
       leaderboard: {
