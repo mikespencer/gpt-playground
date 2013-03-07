@@ -1,11 +1,14 @@
 /**
- *  Checks and returns an object of open spots and relevant properties (hardcodes, etc).
- *  @arg: json flight template (wp_config style)
+ *  Checks and builds an ad template of open spots on the current page
  */
-(function(w, d){
+(function(w, d, define){
 
   'use strict';
 
+  /**
+   *  Checks and returns an object of open spots and relevant properties (hardcodes, etc).
+   *  @arg: json flight template (wp_config style)
+   */
   function TemplateBuilder(config){
     this.flights = config;
     this.template = this.exec();
@@ -54,9 +57,9 @@
   };
 
   if(typeof define === 'function'){
-    define(function(){
+    define('templateBuilder', function(){
       return TemplateBuilder;
     });
   }
 
-})(window, document);
+})(window, document, window.define);

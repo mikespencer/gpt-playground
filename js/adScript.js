@@ -1,115 +1,149 @@
-(function(w, d){
+/*global requirejs, placeAd2:true, placeAd2Queue */
+
+/**
+ *  Universal script that does adops initialisation and determines and loads site specific ad script/s
+ */
+(function(w, d, requirejs, define){
 
   'use strict';
 
+  //potential site specific scripts/modules with attribute mapping 
   var siteMapping = {
-        wp: 'wp',
-        slate: 'slate',
-        theroot: 'root'
-      },
+      wp: 'wp',
+      slate: 'slate',
+      theroot: 'root',
+      mobile: 'mobile'
+    },
 
-      dev_config = {
-        baseUrl: 'js/modules'
+    //requirejs configuration
+    dev_config = {
+      baseUrl: 'js/modules',
+      paths: {
+        'gpt': 'http://www.googletagservices.com/tag/js/gpt',
+        'jquery': 'http://js.washingtonpost.com/wpost/js/combo/?token=20121010232000&c=true&m=true&context=eidos&r=/jquery-1.7.1.js'
       },
-      prod_config = {
-        baseUrl: 'http://js.washingtonpost.com/wp-srv/ad/amd/modules',
-        paths: {
-          'gpt': 'http://www.googletagservices.com/tag/js/gpt',
-          'jquery': 'http://js.washingtonpost.com/wpost/js/combo/?token=20121010232000&c=true&m=true&context=eidos&r=/jquery-1.7.1.js'
-        },
-        shim: {
-          'gpt': {
-            exports: 'googletag'
-          }
+      shim: {
+        'gpt': {
+          exports: 'googletag'
         }
-      },
+      }
+    },
 
-      sra = false,
-      async = true,
+    //single request architecture
+    sra = false,
 
-      site = siteMapping[getSite()] || 'wp',
-      script = [site],
+    //async rendering
+    async = true,
 
-      gpt = d.createElement('script'),
-      target = d.getElementsByTagName('head')[0] || d.body;
+    //determine site script or default to 'wp'
+    siteScript = siteMapping[getSite()] || 'wp';
 
-  //load gpt:
-  gpt.src = 'http://www.googletagservices.com/tag/js/gpt.js';
-  gpt.async = true;
-  target.appendChild(gpt);
 
   //configure requirejs;
   requirejs.config(dev_config);
 
   //load dependencies:
-  requirejs(script, callback);
+  requirejs([siteScript, 'gpt'], function (wpAd, googletag){
 
-  function callback(wpAd){
-    googletag.cmd.push(function(){
-
-
-      if(wpAd.init && typeof wpAd.init === 'object'){
-        var len = wpAd.init.length,
-            i = 0;
-        for(i;i<len;i++){
-          if(typeof wpAd.init[i] === 'function'){
-            wpAd.init[i]();
-          }
+    //call any queued up functions
+    if(wpAd.init && typeof wpAd.init === 'object'){
+      var len = wpAd.init.length,
+        i = 0;
+      for(i;i<len;i++){
+        if(typeof wpAd.init[i] === 'function'){
+          wpAd.init[i]();
         }
       }
+    }
 
-      wpAd.gpt_config = new wpAd.GPTConfig({
-        googletag: w.googletag,
-        sra: false
-      });
-
-      placeAd2 = function(where, what, del, otf){
-        var pos = what,
-            posOverride = false,
-            posArray;
-        if(/\|/.test(what)){
-          posArray = what.split(/\|/);
-          what = posArray[0];
-          posOverride = posArray[1];
-          pos = posArray.join('_');
-        }
-        if(wpAd.config.adTypes[what] && !wpAd.template[pos]){
-          wpAd.template[pos] = new wpAd.Ad({
-            where: wpAd.where,
-            sz: wpAd.config.adTypes[what].sz,
-            what: what,
-            pos: pos,
-            posOverride: posOverride
-          });
-          wpAd.template[pos].slot.render();
-        } else{
-          wpAd.template[pos].slot.refresh();
-        }
-        try{
-          console.log(pos, wpAd.template[what]);
-        }catch(e){}
-      };
-
-      callPlaceAd2Queue(window.placeAd2Queue);
-
+    //initialise GPT
+    wpAd.gpt_config = new wpAd.GPTConfig({
+      googletag: w.googletag,
+      sra: false
     });
-  }
 
+    //redefine placeAd2
+    placeAd2 = function(where, what, del, otf){
+      var pos = what,
+        posOverride = false,
+        posArray,
+        ad;
+
+      //determine pos value and potential posOverride
+      if(/\|/.test(what)){
+        posArray = what.split(/\|/);
+        what = posArray[0];
+        posOverride = posArray[1];
+        pos = posArray.join('_');
+      }
+
+      //if the ad type is legit and hasn't already been build/rendered on the page
+      if(wpAd.config.adTypes[what] && !wpAd.template[pos]){
+
+        //build and store our new ad
+        ad = new wpAd.Ad({
+          dfpSite: wpAd.dfpSite,
+          where: where,
+          sz: wpAd.config.adTypes[what].sz,
+          what: what,
+          pos: pos,
+          posOverride: posOverride
+        });
+
+        //overrides/hackbin
+        ad = wpAd.overrides.exec(ad);
+
+        //create gpt formatted ad slot out of our ad spot and store it as 'slot'
+        ad.slot = new wpAd.GPT_AdSlot(ad);
+
+        //display the gpt ad
+        ad.slot.render();
+
+        //store for debugging
+        wpAd.template[pos] = ad;
+
+      } else{
+        //refresh if ad/spot already rendered
+        wpAd.template[pos].slot.refresh();
+      }
+
+      //debugging
+      try{
+        w.console.log(pos, wpAd.template[what]);
+      }catch(e){}
+
+    };
+
+    //build and display queued up ads from previous placeAd2 calls
+    callPlaceAd2Queue(window.placeAd2Queue);
+
+    //expose wpAd to the window for debugging + external code to access/build off of.
+    w.wpAd = wpAd;
+
+  });
+
+  /**
+   * Calls queued up placeAd2 calls when placeAd2 is redefined above
+   * @args: array of placeAd2 arguments
+   */
   function callPlaceAd2Queue(queue){
     if(queue){
       var l = queue.length,
-          i = 0;
+        i = 0;
       for(i;i<l;i++){
         placeAd2.apply(window, queue[i]);
       }
     }
   }
 
+  /**
+   * Returns the site specific script, or returns false if unable to determine
+   */
   function getSite(){
     var adScript = d.getElementById('adScript'),
-        scripts =  adScript ? [adScript] : d.getElementsByTagName('script'),
-        l = scripts.length,
-        attr;
+      scripts =  adScript ? [adScript] : d.getElementsByTagName('script'),
+      l = scripts.length,
+      attr;
     while(l--){
       attr = scripts[l].getAttribute('data-adops-site');
       if(attr){
@@ -119,4 +153,4 @@
     return false;
   }
 
-})(window, document);
+})(window, document, window.requirejs, window.define);

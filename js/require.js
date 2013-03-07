@@ -39,8 +39,8 @@ g.defQueue:R).push([b,c,d])};define.amd={jQuery:!0};l.exec=function(b){return ev
   */
 var googletag = googletag || {},
 
-    //store placeAd2 calls if 'real' placeAd2 isn't defined yet
-    placeAd2Queue = [];
+  //store placeAd2 calls if 'real' placeAd2 isn't defined yet
+  placeAd2Queue = [];
 
 googletag.cmd = googletag.cmd || [];
 
