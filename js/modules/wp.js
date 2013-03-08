@@ -6,7 +6,10 @@
   'use strict';
 
   if(typeof define === 'function'){
-    define('wp', ['generic', 'wp.config', 'wp.overrides'], function(wpAd, config, overrides){
+    define('wp', ['generic', 'wp.config', 'wp.overrides', 'zoneBuilder'], function(wpAd, config, overrides, zoneBuilder){
+
+      //override commercialNode on wp
+      w.commercialNode = zoneBuilder.exec();
 
       /**
         * Add ad specific, site specific keyvalues here:

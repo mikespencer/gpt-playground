@@ -78,33 +78,36 @@
       }
 
       //if the ad type is legit and hasn't already been build/rendered on the page
-      if(wpAd.config.adTypes[what] && !wpAd.template[pos]){
+      if(wpAd.config.adTypes[what]){
+        if(!wpAd.template[pos]){
 
-        //build and store our new ad
-        ad = new wpAd.Ad({
-          dfpSite: wpAd.dfpSite,
-          where: where,
-          sz: wpAd.config.adTypes[what].sz,
-          what: what,
-          pos: pos,
-          posOverride: posOverride
-        });
+          //build and store our new ad
+          ad = new wpAd.Ad({
+            templateSettings: wpAd.config.adTypes[what],
+            dfpSite: wpAd.dfpSite,
+            where: w.commercialNode,
+            size: wpAd.config.adTypes[what].size,
+            what: what,
+            pos: pos,
+            posOverride: posOverride
+          });
 
-        //overrides/hackbin
-        ad = wpAd.overrides.exec(ad);
+          //overrides/hackbin
+          ad = wpAd.overrides.exec(ad);
 
-        //create gpt formatted ad slot out of our ad spot and store it as 'slot'
-        ad.slot = new wpAd.GPT_AdSlot(ad);
+          //create gpt formatted ad slot out of our ad spot and store it as 'slot'
+          ad.slot = new wpAd.GPT_AdSlot(ad);
 
-        //display the gpt ad
-        ad.slot.render();
+          //display the gpt ad
+          ad.slot.render();
 
-        //store for debugging
-        wpAd.template[pos] = ad;
+          //store for debugging
+          wpAd.template[pos] = ad;
 
-      } else{
-        //refresh if ad/spot already rendered
-        wpAd.template[pos].slot.refresh();
+        } else{
+          //refresh if ad/spot already rendered
+          wpAd.template[pos].slot.refresh();
+        }
       }
 
       //debugging

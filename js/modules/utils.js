@@ -59,6 +59,25 @@
         }
         return(str);
       },
+      getScript: function(src) {
+        var s = d.createElement('script'),
+          target = d.body || d.getElementsByTagName('head')[0] || false,
+          callback = arguments[1] || false;
+        if(target){
+          s.type = 'text/' + (src.type || 'javascript');
+          s.src = src.src || src;
+          if(typeof callback === 'function'){
+            s.onreadystatechange = s.onload = function() {
+              var state = s.readyState;
+              if (!callback.done && (!state || /loaded|complete/.test(state))) {
+                callback.done = true;
+                callback();
+              }
+            };
+          }
+          target.appendChild(s);
+        }
+      },
       iframeBuilder: function (atts) {
         var i = d.createElement('iframe'),
           key;
@@ -80,25 +99,6 @@
         }
 
         return i;
-      },
-      getScript: function(src) {
-        var s = d.createElement('script'),
-          target = d.body || d.getElementsByTagName('head')[0] || false,
-          callback = arguments[1] || false;
-        if(target){
-          s.type = 'text/' + (src.type || 'javascript');
-          s.src = src.src || src;
-          if(typeof callback === 'function'){
-            s.onreadystatechange = s.onload = function() {
-              var state = s.readyState;
-              if (!callback.done && (!state || /loaded|complete/.test(state))) {
-                callback.done = true;
-                callback();
-              }
-            };
-          }
-          target.appendChild(s);
-        }
       },
       setCookie: function (name, val, expires, path, domain, secure) {
         d.cookie = name + "=" + escape(val) + (expires ? "; expires=" + expires : "") + (path ? "; path=" + path : "") + (domain ? "; domain=" + domain : "") + (secure ? "; secure" : "");

@@ -6,8 +6,8 @@
 
   'use strict';
 
-  var commercialNode = commercialNode || 'politics',
-    wp_meta_data = wp_meta_data || {},
+  var commercialNode = w.commercialNode || 'politics',
+    wp_meta_data = w.wp_meta_data || {},
     zoneBuilder = {
       contentType: {
         audiostory: 'audio',

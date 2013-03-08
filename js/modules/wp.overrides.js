@@ -16,16 +16,16 @@
           //if 'pos' of the ad === leaderboard..
           leaderboard: function(){
             this.keyvalues['lb_test_kv'] = 'true';
-            this.keyvalues.pos.push('ad1');
+            //this.keyvalues.pos.push('ad1');
           }
         },
         where: {
           //if 'where' of the ad === 'washingtonpost.com'...
           'washingtonpost.com': function(){
-
+            
           },
           politics: function(){
-
+            //this.config.where += '/front';
           }
         }
       };
