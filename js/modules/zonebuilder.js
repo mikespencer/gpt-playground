@@ -1,14 +1,16 @@
 /**
- *  Dynamically extends commercialNode
- *  @author: Mike Spencer michael.spencer@washpost.com
+ * Dynamically extends commercialNode
  */
 (function(w, d, define){
 
   'use strict';
 
   var commercialNode = w.commercialNode || 'politics',
+
     wp_meta_data = w.wp_meta_data || {},
+
     zoneBuilder = {
+
       contentType: {
         audiostory: 'audio',
         blogstory: 'blog',
@@ -19,26 +21,32 @@
         ugcphotostory: 'ugc',
         videostory: 'video'
       },
+
       zones: {
         contentType: function(){
           var a = zoneBuilder.getString(wp_meta_data.contentType);
           return a && commercialNode !== 'washingtonpost.com' && zoneBuilder.contentType[a.toLowerCase()] || '';
         },
+
         contentName: function(){
           return zoneBuilder.getString(wp_meta_data.contentName);
         },
+
         subsection: function(){
           return zoneBuilder.getString(wp_meta_data.subsection);
         }
       },
+
       getString: function(a){
         return a ? (typeof a === 'string' ? a : a[0]) : '';
       },
+
       validate: function(a){
         if(!a){return false;}
         a = a.replace(/\s/g, '').replace(/^\/*|\/*$/g, '').replace(/[^0-9a-zA-Z_\.\-\/]/g, '');
         return (/^[^a-z]/i.test(a) ? 'c' : '') + a;
       },
+
       exec: function(){
         var zones = zoneBuilder.zones,
           cn = [zoneBuilder.validate(commercialNode)],
@@ -54,6 +62,7 @@
         zoneBuilder.executed = true;
         return cn.join('/').toLowerCase();
       }
+
     };
 
   if(typeof w.define === 'function'){

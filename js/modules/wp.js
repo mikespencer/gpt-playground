@@ -1,29 +1,34 @@
 /**
- *  washingtonpost.com site specific ad script (desktop)
+ * washingtonpost.com site specific ad script (desktop)
  */
 (function(w, d, commercialNode, define){
 
   'use strict';
 
   if(typeof define === 'function'){
-    define('wp', ['generic', 'wp.config', 'wp.overrides', 'zoneBuilder'], function(wpAd, config, overrides, zoneBuilder){
+    define('wp', ['generic', 'wp.config', 'utils', 'wp.overrides', 'zoneBuilder'], function(wpAd, config, utils, overrides, zoneBuilder){
 
       //override commercialNode on wp
       w.commercialNode = zoneBuilder.exec();
 
+      //add wp specific flags
+      utils.extend(wpAd.flags, {
+        reload: (utils.urlCheck('reload', { type: 'variable' }) === 'true')
+      });
+
       /**
-        * Add ad specific, site specific keyvalues here:
-        */
-      wpAd.utils.extend(wpAd.Ad.prototype.keyvalues_config, {
+       * Add ad specific, site specific keyvalues here:
+       */
+      utils.extend(wpAd.Ad.prototype.keyvaluesConfig, {
         article: function(){
           return ['wp_article'];
         }
       });
 
       /**
-        * Add global, site specific keyvalues here:
-        */
-      wpAd.utils.extend(wpAd.GPTConfig.prototype.keyvalues_config, {
+       * Add global, site specific keyvalues here:
+       */
+      utils.extend(wpAd.GPTConfig.prototype.keyvaluesConfig, {
         WPATC: function(){
           return ['wpatc_cookie'];
         },
@@ -40,6 +45,9 @@
 
       //pass in site specific overrides:
       wpAd.overrides = overrides;
+
+      //expose helper functions:
+      wpAd.utils = utils;
 
       //testing
       wpAd.init.push(function(){

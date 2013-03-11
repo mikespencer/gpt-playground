@@ -1,15 +1,17 @@
 /**
- *  Extended set of helper functions for ads
+ * Extended set of helper functions for ads
  */
 (function(w, d, define){
 
   'use strict';
 
   define('utils', ['utils.core'], function(utils){
+
     /**
-     *  extend basic utils object with advanced functionality
+     * extend basic utils object with advanced functionality
      */
     utils = utils.extend(utils, {
+
       addCSS: function (url) {
         var l = d.createElement('link');
         l.href = url;
@@ -17,6 +19,7 @@
         l.type = 'text/css';
         d.getElementsByTagName('head')[0].appendChild(l);
       },
+
       addPixel: function (url) {
         var i = d.createElement('img');
         i.src = url.replace(/\[timestamp\]|%n|\[random\]/gi, Math.floor(Math.random() * 1E9));
@@ -27,6 +30,7 @@
         i.style.border = '0';
         d.body.appendChild(i);
       },
+
       clone: function (obj) {
         if(!utils.isObject(obj)) {
           return obj;
@@ -40,25 +44,7 @@
         }
         return temp;
       },
-      getCookie: function (name) {
-        var cookie = '' + d.cookie,
-          search = '' + name + '=',
-          str = null,
-          offset = 0,
-          end = 0;
-        if(cookie.length > 0) {
-          offset = cookie.indexOf(search);
-          if(offset !== -1) {
-            offset += search.length;
-            end = cookie.indexOf(';', offset);
-            if(end === -1) {
-              end = cookie.length;
-            }
-            str = unescape(cookie.substring(offset, end));
-          }
-        }
-        return(str);
-      },
+
       getScript: function(src) {
         var s = d.createElement('script'),
           target = d.body || d.getElementsByTagName('head')[0] || false,
@@ -78,6 +64,7 @@
           target.appendChild(s);
         }
       },
+
       iframeBuilder: function (atts) {
         var i = d.createElement('iframe'),
           key;
@@ -99,10 +86,8 @@
         }
 
         return i;
-      },
-      setCookie: function (name, val, expires, path, domain, secure) {
-        d.cookie = name + "=" + escape(val) + (expires ? "; expires=" + expires : "") + (path ? "; path=" + path : "") + (domain ? "; domain=" + domain : "") + (secure ? "; secure" : "");
       }
+
     });
 
     return utils;

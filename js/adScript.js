@@ -45,6 +45,13 @@
   //load dependencies:
   requirejs([siteScript, 'gpt'], function (wpAd, googletag){
 
+    if(wpAd.flags.debug){
+      wpAd.debugQueue = [];
+      requirejs(['debug'], function(debug){
+        debug.init();
+      });
+    }
+
     //call any queued up functions
     if(wpAd.init && typeof wpAd.init === 'object'){
       var len = wpAd.init.length,
@@ -92,14 +99,13 @@
             posOverride: posOverride
           });
 
-          //overrides/hackbin
-          ad = wpAd.overrides.exec(ad);
-
-          //create gpt formatted ad slot out of our ad spot and store it as 'slot'
-          ad.slot = new wpAd.GPT_AdSlot(ad);
+          //overrides (the new hackbin)
+          if(wpAd.overrides){
+            ad = wpAd.overrides.exec(ad);
+          }
 
           //display the gpt ad
-          ad.slot.render();
+          ad.render();
 
           //store for debugging
           wpAd.template[pos] = ad;
@@ -110,9 +116,11 @@
         }
       }
 
-      //debugging
+      if(wpAd.flags.debug){
+        wpAd.debugQueue.push(ad);
+      }
       try{
-        w.console.log(pos, wpAd.template[what]);
+        w.console.log('RENDERED AD:\n', ad.config.pos + '\n', ad);
       }catch(e){}
 
     };
@@ -125,16 +133,18 @@
 
   });
 
+
   /**
    * Calls queued up placeAd2 calls when placeAd2 is redefined above
-   * @args: array of placeAd2 arguments
    */
   function callPlaceAd2Queue(queue){
     if(queue){
       var l = queue.length,
         i = 0;
       for(i;i<l;i++){
+        //console.time('placeAd2');
         placeAd2.apply(window, queue[i]);
+        //console.timeEnd('placeAd2');
       }
     }
   }

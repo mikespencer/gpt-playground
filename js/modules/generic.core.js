@@ -1,20 +1,25 @@
 /**
- *  Core universal code for rendering ads accross sites/platforms
+ * Core universal code for rendering ads accross sites/platforms
+ * Should include minimal functionality to fully support mobile web
  */
 (function(w, d, define){
 
   'use strict';
 
   if(typeof define === 'function'){
-    define(['utils.core', 'Ad', 'GPT_AdSlot', 'GPTConfig'], function(utils, Ad, GPT_AdSlot, GPTConfig){
+    define(['Ad', 'GPTConfig'], function(Ad, GPTConfig){
 
       return {
-        utils: utils,
+        //utils: utils,
         Ad: Ad,
-        GPT_AdSlot: GPT_AdSlot,
         GPTConfig: GPTConfig,
         template: {},
-        init: []
+        init: [],
+        flags: {
+          debug: /debugadcode/i.test(location.search),
+          allAds: /allAds/.test(location.search),
+          no_ads: /no_ads/.test(location.search)
+        }
       };
 
     });

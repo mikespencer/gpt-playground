@@ -1,6 +1,5 @@
 /**
  * GPT Initial setup
- * probably a better way to do this, merge/integrating with GPT_AdSlot?..
  */
 (function(w, d, define){
 
@@ -18,7 +17,7 @@
         this.googletag = this.config.googletag;
         this.pubservice = this.googletag.pubads();
 
-        this.keyvalues = utils.keyvalueIterator(this.keyvalues_config, this);
+        this.keyvalues = utils.keyvalueIterator(this.keyvaluesConfig, this);
         this.addKeyvalue(this.keyvalues);
 
         if(this.config.sra){
@@ -47,13 +46,19 @@
           return this;
         },
 
-        keyvalues_config: {
-          rs: function(){
-            return ['rs_value1', 'rs_value2', 'rs_value3'];
-          },
+        keyvaluesConfig: {
           kw: function(){
-            var param = utils.urlCheck('test_ads', {type: 'variable'});
+            var param = utils.urlCheck('test_ads', { type: 'variable' });
             return param ? ['test_' + param] : false;
+          },
+          poe: function(){
+            var name = w.location.hostname + '_poe';
+            if(utils.getCookie(name)){
+              return ['no'];
+            } else {
+              utils.setCookie(name, 'true', '', '/', '','');
+              return ['yes'];
+            }
           }
         }
       };

@@ -1,5 +1,9 @@
 /**
- *  Checks and builds an ad template of open spots on the current page
+ * Checks and builds an ad template of open spots on the current page
+ */
+
+ /*
+  NONE OF THIS WORKS YET...
  */
 (function(w, d, define, commercialNode){
 
@@ -9,8 +13,7 @@
     define('templateBuilder', ['estNowWithYear', 'utils.core'], function(estNowWithYear, utils){
 
       /**
-       *  Checks and returns an object of open spots and relevant properties (hardcodes, etc).
-       *  @arg: json flight template (wp_config style)
+       * Checks and returns an object of open spots and relevant properties (hardcodes, etc).
        */
       function TemplateBuilder(config){
         this.flights = config;
@@ -47,9 +50,6 @@
         //may not be necessary..
         template: {},
 
-        /**
-         *  @args: template = json object eg: { what: ['leaderboard', '88x31'], where: ['washingtonpost.com'] }
-         */
         loopThroughTemplate: function (id, template) {
           for(var key in this.checks){
             if(template.hasOwnProperty(key) && this.checks.hasOwnProperty(key)){
